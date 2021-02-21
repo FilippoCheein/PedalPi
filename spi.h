@@ -35,7 +35,7 @@ typedef struct spi_device* SPI_HANDLE;			// Define an SPI_HANDLE pointer to opaq
 . The SPI device is setup to the bits, speed and mode provided.
 . RETURN: valid SPI_HANDLE for success, NULL for any failure
 .--------------------------------------------------------------------------*/
-SPI_HANDLE SpiOpenPort (uint8_t spi_devicenum, uint16_t bit_exchange_size, uint32_t speed, uint8_t mode, bool useLock);
+SPI_HANDLE SpiOpenPort (uint8_t spi_devicenum, char spi_port, uint16_t bit_exchange_size, uint32_t speed, uint8_t mode, bool useLock);
 
 /*-[ SpiClosePort ]---------------------------------------------------------}
 . Given a valid SPI handle the access is released and the handle freed.
