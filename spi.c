@@ -50,7 +50,7 @@ static struct spi_device spitab[NSPI] = { {0} };
 . The SPI device is setup to the bits, speed and mode provided.
 . RETURN: valid SPI_HANDLE for success, NULL for any failure
 .--------------------------------------------------------------------------*/
-SPI_HANDLE SpiOpenPort (uint8_t spi_devicenum, ,char spi_port, uint16_t bit_exchange_size, uint32_t speed, uint8_t mode, bool useLock)
+SPI_HANDLE SpiOpenPort (uint8_t spi_devicenum, uint8_t spi_port, uint16_t bit_exchange_size, uint32_t speed, uint8_t mode, bool useLock)
 {
 	SPI_HANDLE spi = 0;												// Preset null handle
 	struct spi_device* spi_ptr = &spitab[spi_devicenum];			// SPI device pointer 
@@ -68,7 +68,7 @@ SPI_HANDLE SpiOpenPort (uint8_t spi_devicenum, ,char spi_port, uint16_t bit_exch
         uint8_t spi_mode = mode;
 		uint16_t spi_bitsPerWord = bit_exchange_size;
         char buf[256] = { 0 };
-		sprintf(&buf[0], spi_port, (char)(0x30 + spi_devicenum));
+		sprintf(&buf[0], "/dev/spidev%c.%c", (char)(0x30 + spi_port), (char)(0x30 + spi_devicenum));
 		int fd = open(&buf[0], O_RDWR);								// Open the SPI device
 		if (fd >= 0)												// SPI device opened correctly
 		{

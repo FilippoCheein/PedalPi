@@ -35,11 +35,11 @@ int main(int argc, char *argv[])
     printf("in main\n");
 
     /* Initialize SPI0, 44.1khz, Mode 0, no semaphore locks */
-    SPI_HANDLE spi0 = SpiOpenPort(0x0, "/dev/spidev0.%c", 8, 44100, SPI_MODE_0, false); 
+    SPI_HANDLE spi0 = SpiOpenPort(0x0, 0x0, 8, 44100, SPI_MODE_0, false); 
     printf("spi0 handle: %d\n", spi0);
 
     /* Initialize SPI0, 44.1khz, Mode 0, no semaphore locks */
-    SPI_HANDLE spi6 = SpiOpenPort(0x0, "/dev/spidev3.%c", 8, 44100, SPI_MODE_0, false); 
+    SPI_HANDLE spi6 = SpiOpenPort(0x0, 0x3, 8, 44100, SPI_MODE_0, false); 
     printf("spi6 handle: %d\n", spi6);
 
     if (spi0)
@@ -65,23 +65,23 @@ int main(int argc, char *argv[])
             uint16_t mux_Rxbuf[2] = {0x45, 0x45}; // Sets IRQ Register bits
         
             //printf("adcdata_buf: %d, %d\n", adcdata_buf[0], adcdata_buf[1]);
-            int irq_val = SpiWriteAndRead(spi, &irq_buf[0], &irq_Rxbuf[0], 2, false);   // Transfer buffer data to SPI call
+            int irq_val = SpiWriteAndRead(spi0, &irq_buf[0], &irq_Rxbuf[0], 2, false);   // Transfer buffer data to SPI call
             printf("irq return value: %d\n",irq_val);
             printf("irq buf values: %d, %d\n",irq_Rxbuf[0], irq_Rxbuf[1]);
             
-            int mux_val = SpiWriteAndRead(spi, &mux_buf[0], &mux_Rxbuf[0], 2, false);   // Transfer buffer data to SPI call
+            int mux_val = SpiWriteAndRead(spi0, &mux_buf[0], &mux_Rxbuf[0], 2, false);   // Transfer buffer data to SPI call
             printf("mux return value: %d\n",mux_val);
             printf("mux buf values: %d, %d\n",mux_Rxbuf[0], mux_Rxbuf[1]);
             
-            int config0_val = SpiWriteAndRead(spi, &config0_buf[0], &config0_Rxbuf[0], 3, false);   // Transfer buffer data to SPI call
+            int config0_val = SpiWriteAndRead(spi0, &config0_buf[0], &config0_Rxbuf[0], 3, false);   // Transfer buffer data to SPI call
             printf("config0 return value: %d\n",config0_val);
             printf("config0Rx buf values: %d, %d, %d\n",config0_Rxbuf[0], config0_Rxbuf[1], config0_Rxbuf[2]);
             
-            int config0_data = SpiWriteAndRead(spi, &config0Val_buf[0], &config0Val_Rxbuf[0], 3, false);   // Transfer buffer data to SPI call
+            int config0_data = SpiWriteAndRead(spi0, &config0Val_buf[0], &config0Val_Rxbuf[0], 3, false);   // Transfer buffer data to SPI call
             printf("config0 read return value: %d\n",config0_data);
             printf("config0 readRx buf values: %d, %d, %d\n",config0Val_Rxbuf[0], config0Val_Rxbuf[1], config0Val_Rxbuf[2]);
             
-            int config3_val = SpiWriteAndRead(spi, &config3_buf[0], &config3_Rxbuf[0], 2, false);   // Transfer buffer data to SPI call
+            int config3_val = SpiWriteAndRead(spi0, &config3_buf[0], &config3_Rxbuf[0], 2, false);   // Transfer buffer data to SPI call
             printf("config3 return value: %d\n",config3_val);
             printf("config3 buf values: %d, %d\n",config3_Rxbuf[0], config3_Rxbuf[1]);
             
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
             
             uint8_t adcdata_buf[3] = {ADC_ADCDATA_READ, 0x45, ADC_DONT_CARE_CMD};	// Sets up read of ADCDATA Register bits    
             uint16_t adcdata_Rxbuf[3] = {0x45, 0x45, 0x45};
-            int adcdata_val = SpiWriteAndRead(spi, &adcdata_buf[0], &adcdata_Rxbuf[0], 3, false);   // Transfer buffer data to SPI call
+            int adcdata_val = SpiWriteAndRead(spi0, &adcdata_buf[0], &adcdata_Rxbuf[0], 3, false);   // Transfer buffer data to SPI call
             printf("adcdata return value: %d\n",adcdata_val);
             printf("adc_Rxvalues: %d, %d\n", adcdata_Rxbuf[0], adcdata_Rxbuf[1]);
             //printf("spi handle tx value: %d\n", spi->tx_buf);
@@ -124,23 +124,23 @@ int main(int argc, char *argv[])
             uint16_t mux_Rxbuf[2] = {0x45, 0x45}; // Sets IRQ Register bits
         
             //printf("adcdata_buf: %d, %d\n", adcdata_buf[0], adcdata_buf[1]);
-            int irq_val = SpiWriteAndRead(spi, &irq_buf[0], &irq_Rxbuf[0], 2, false);   // Transfer buffer data to SPI call
+            int irq_val = SpiWriteAndRead(spi6, &irq_buf[0], &irq_Rxbuf[0], 2, false);   // Transfer buffer data to SPI call
             printf("irq return value: %d\n",irq_val);
             printf("irq buf values: %d, %d\n",irq_Rxbuf[0], irq_Rxbuf[1]);
             
-            int mux_val = SpiWriteAndRead(spi, &mux_buf[0], &mux_Rxbuf[0], 2, false);   // Transfer buffer data to SPI call
+            int mux_val = SpiWriteAndRead(spi6, &mux_buf[0], &mux_Rxbuf[0], 2, false);   // Transfer buffer data to SPI call
             printf("mux return value: %d\n",mux_val);
             printf("mux buf values: %d, %d\n",mux_Rxbuf[0], mux_Rxbuf[1]);
             
-            int config0_val = SpiWriteAndRead(spi, &config0_buf[0], &config0_Rxbuf[0], 3, false);   // Transfer buffer data to SPI call
+            int config0_val = SpiWriteAndRead(spi6, &config0_buf[0], &config0_Rxbuf[0], 3, false);   // Transfer buffer data to SPI call
             printf("config0 return value: %d\n",config0_val);
             printf("config0Rx buf values: %d, %d, %d\n",config0_Rxbuf[0], config0_Rxbuf[1], config0_Rxbuf[2]);
             
-            int config0_data = SpiWriteAndRead(spi, &config0Val_buf[0], &config0Val_Rxbuf[0], 3, false);   // Transfer buffer data to SPI call
+            int config0_data = SpiWriteAndRead(spi6, &config0Val_buf[0], &config0Val_Rxbuf[0], 3, false);   // Transfer buffer data to SPI call
             printf("config0 read return value: %d\n",config0_data);
             printf("config0 readRx buf values: %d, %d, %d\n",config0Val_Rxbuf[0], config0Val_Rxbuf[1], config0Val_Rxbuf[2]);
             
-            int config3_val = SpiWriteAndRead(spi, &config3_buf[0], &config3_Rxbuf[0], 2, false);   // Transfer buffer data to SPI call
+            int config3_val = SpiWriteAndRead(spi6, &config3_buf[0], &config3_Rxbuf[0], 2, false);   // Transfer buffer data to SPI call
             printf("config3 return value: %d\n",config3_val);
             printf("config3 buf values: %d, %d\n",config3_Rxbuf[0], config3_Rxbuf[1]);
             
@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
             
             uint8_t adcdata_buf[3] = {ADC_ADCDATA_READ, 0x45, ADC_DONT_CARE_CMD};	// Sets up read of ADCDATA Register bits    
             uint16_t adcdata_Rxbuf[3] = {0x45, 0x45, 0x45};
-            int adcdata_val = SpiWriteAndRead(spi, &adcdata_buf[0], &adcdata_Rxbuf[0], 3, false);   // Transfer buffer data to SPI call
+            int adcdata_val = SpiWriteAndRead(spi6, &adcdata_buf[0], &adcdata_Rxbuf[0], 3, false);   // Transfer buffer data to SPI call
             printf("adcdata return value: %d\n",adcdata_val);
             printf("adc_Rxvalues: %d, %d\n", adcdata_Rxbuf[0], adcdata_Rxbuf[1]);
             //printf("spi handle tx value: %d\n", spi->tx_buf);
