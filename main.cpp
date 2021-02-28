@@ -139,48 +139,7 @@ int main(int argc, char *argv[])
 
     if (spi6)
     {
-      //while(1)
-      //{
-            //uint8_t DAC_DATA_VALUES = 0x45; 
-            // Writes the value(s) in the Tx buffer to the DAC data register
-            //int8_t  dacdata_Writebuf[2] = {DAC_DATA_CMD, DAC_DATA_CMD};
-            //uint16_t  dacdata_WriteRxbuf[2] = {0x69, 0x69};
-            
-            //uint8_t dactrig_buf[3] = {DAC_TRIG_CMD, DAC_TRIG_RES, DAC_TRIG_DEFAULT};
-            //uint16_t dactrig_Rxbuf[3] = {0x45, 0x45, 0x45};
-            
-            //uint8_t dacgain_buf[3] = {DAC_GAIN_CMD, DAC_GAIN_DIV, DAC_GAIN_GAIN};
-            //uint16_t dacgain_Rxbuf[3] = {0x45, 0x45, 0x45};
-            
-            //uint8_t dacdata_buf[3] = {DAC_DATA_CMD, DAC_DATA_VALUES, DAC_DATA_VALUES}; 
-            //printf("dac data buff: %x\n",dacdata_buf[0]);
-            //uint16_t dacdata_Rxbuf[3] = {0x45, 0x45, 0x45}; // DAC Rx data write buffer
-            
-            //uint8_t dacconfig_buf[3] = {DAC_CONFIG_CMD, DAC_CONFIG_REF_OFF, DAC_CONFIG_PWR_DWN};
-            //uint16_t dacconfig_Rxbuf[3] = {0x45, 0x45, 0x45};
-            
-      //while(1)
-      //for(int i = 0; i < 100; i ++)
-      //{  
-            //SpiWriteAndRead(spi6, &dacdata_Writebuf[0], &dacdata_WriteRxbuf[0], 2, true);
-            //int dacdata_val = SpiWriteAndRead16(spi6, &dacdata_buf[0], &dacdata_Rxbuf[0], 2, false);   // Transfer buffer data to SPI call
-           // int dactrig_val = SpiWriteAndRead(spi6, &dactrig_buf[0], &dactrig_Rxbuf[0], 3, false);   // Transfer buffer data to SPI call
-            //int dacgain_val = SpiWriteAndRead(spi6, &dacgain_buf[0], &dacgain_Rxbuf[0], 3, false);   // Transfer buffer data to SPI call
-            //int dacdata_val = SpiWriteAndRead(spi6, &dacdata_buf[0], &dacdata_Rxbuf[0], 3, false);   // Transfer buffer data to SPI call
-            //int dacconfig_val = SpiWriteAndRead(spi6, &dacconfig_buf[0], &dacconfig_Rxbuf[0], 3, false);   // Transfer buffer data to SPI call
-            //int dacdata_val = SpiWriteAndRead32(spi6, &dacdata_buf[0], &dacdata_Rxbuf[0], 3, false);            
-            //printf("dac trig return value: %d\n",dactrig_val);
-            //printf("dactrig_Rxbuf values: %d, %d, %d\n",dactrig_Rxbuf[0], dactrig_Rxbuf[1], dactrig_Rxbuf[2]);
-            
-            //printf("dac gain return value: %d\n",dacgain_val);
-            //printf("dacgain_Rxbuf values: %d, %d, %d\n",dacgain_Rxbuf[0], dacgain_Rxbuf[1], dacgain_Rxbuf[2]);
-            
-           // printf("dac data return value: %d\n",dacdata_val);
-            //printf("dacdata_Rxbuf values: %d, %d, %d\n",dacdata_Rxbuf[0], dacdata_Rxbuf[1], dacdata_Rxbuf[2]);
-            
-            //printf("dac config return value: %d\n",dacconfig_val);
-            //printf("dacconfig_Rxbuf values: %d, %d, %d\n",dacconfig_Rxbuf[0], dacconfig_Rxbuf[1], dacconfig_Rxbuf[2]);
-
+      
             uint16_t output;
             uint8_t loByte;
             uint8_t hiByte;
@@ -192,10 +151,10 @@ int main(int argc, char *argv[])
                         output = output + 8;
                         
                         /* Get the lower 8 bits of the input and store it in loByte */
-                        loByte = output & 0x0F;
+                        loByte = output & 0xFF;
 
                         /* get the higher 8 bits and store it in hiByte */
-                        hiByte = (output >> 8) & 0x0F;
+                        hiByte = (output >> 8) & 0xFF;
 
                         /* To send a command to the DAC, the highest 4 bits should be:
                         * 0, BUF, ~GA, and ~SHDN */
