@@ -29,7 +29,6 @@ typedef struct spi_device* SPI_HANDLE;			// Define an SPI_HANDLE pointer to opaq
 
 #define NSPI 2									// 2 SPI devices supported
 
-
 /*-[ SpiOpenPort ]----------------------------------------------------------}
 . Creates a SPI handle which provides access to the SPI device number.
 . The SPI device is setup to the bits, speed and mode provided.
@@ -49,7 +48,23 @@ bool SpiClosePort (SPI_HANDLE spiHandle);
 . the read the buffer pointers can be the same buffer space.
 . RETURN: >= 0 transfer count for success, < 0 for any error
 .--------------------------------------------------------------------------*/
-int SpiWriteAndRead (SPI_HANDLE spiHandle, uint8_t* TxData, uint16_t* RxData, uint8_t Length, bool LeaveCsLow);
+int SpiWriteAndRead (SPI_HANDLE spiHandle, uint8_t* TxData, uint8_t* RxData, uint8_t Length, bool LeaveCsLow);
+
+/*-[ SpiWriteAndRead16 ]------------------------------------------------------}
+. Given a valid SPI handle and valid data pointers the call will send and
+. receive data to and from the buffer pointers. As the write occurs before
+. the read the buffer pointers can be the same buffer space.
+. RETURN: >= 0 transfer count for success, < 0 for any error
+.--------------------------------------------------------------------------*/
+int SpiWriteAndRead16 (SPI_HANDLE spiHandle, uint16_t* TxData, uint16_t* RxData, uint8_t Length, bool LeaveCsLow);
+
+/*-[ SpiWriteAndRead32 ]------------------------------------------------------}
+. Given a valid SPI handle and valid data pointers the call will send and
+. receive data to and from the buffer pointers. As the write occurs before
+. the read the buffer pointers can be the same buffer space.
+. RETURN: >= 0 transfer count for success, < 0 for any error
+.--------------------------------------------------------------------------*/
+int SpiWriteAndRead32 (SPI_HANDLE spiHandle, uint32_t* TxData, uint32_t* RxData, uint8_t Length, bool LeaveCsLow);
 
 /*-[ SpiWriteBlockRepeat ]--------------------------------------------------}
 . Given a valid SPI handle and valid data pointers the call will send the
@@ -64,3 +79,4 @@ int SpiWriteBlockRepeat (SPI_HANDLE spiHandle, uint16_t* TxBlock, uint16_t TxBlo
 #endif
 
 #endif
+

@@ -33,7 +33,7 @@ struct spi_device
 	int spi_fd;									// File descriptor for the SPI device
 	uint32_t spi_speed;							// SPI speed
     sem_t lock;									// Semaphore for lock
-	struct {
+    	struct {
         uint16_t spi_bitsPerWord: 8;			// SPI bits per word
         uint16_t spi_num : 4;					// SPI device table number
         uint16_t _reserved: 2;        			// reserved
@@ -52,7 +52,7 @@ static struct spi_device spitab[NSPI] = { {0} };
 .--------------------------------------------------------------------------*/
 SPI_HANDLE SpiOpenPort (uint8_t spi_devicenum, uint8_t spi_port, uint16_t bit_exchange_size, uint32_t speed, uint8_t mode, bool useLock)
 {
-	SPI_HANDLE spi = 0;												// Preset null handle
+		SPI_HANDLE spi = 0;												// Preset null handle
 	struct spi_device* spi_ptr = &spitab[spi_devicenum];			// SPI device pointer 
 	if (spi_devicenum < NSPI && spi_ptr->inuse == 0 && speed != 0)
 	{
@@ -64,11 +64,19 @@ SPI_HANDLE SpiOpenPort (uint8_t spi_devicenum, uint8_t spi_port, uint16_t bit_ex
         if (useLock)                                                // Using locks
         {
 			sem_init(&spi_ptr->lock, 0, 1);							// Initialize mutex to 1
-        }
+		        }
         uint8_t spi_mode = mode;
 		uint16_t spi_bitsPerWord = bit_exchange_size;
         char buf[256] = { 0 };
-		sprintf(&buf[0], "/dev/spidev%c.%c", (char)(0x30 + spi_port), (char)(0x30 + spi_devicenum));
+		//sprintf(&buf[0], "/dev/spidev%c.%c", (char)(spi_port), (char)(0x30 + spi_devicenum));
+		if (spi_port == 0x0)
+		{
+			sprintf(&buf[0], "/dev/spidev0.%c", (char)(0x30 + spi_devicenum));
+		}
+		if (spi_port == 0x3)
+		{
+			sprintf(&buf[0], "/dev/spidev3.%c", (char)(0x30 + spi_devicenum));
+		}
 		int fd = open(&buf[0], O_RDWR);								// Open the SPI device
 		if (fd >= 0)												// SPI device opened correctly
 		{
@@ -88,6 +96,7 @@ SPI_HANDLE SpiOpenPort (uint8_t spi_devicenum, uint8_t spi_port, uint16_t bit_ex
 	return(spi);													// Return SPI handle result			
 }
 
+	
 /*-[ SpiClosePort ]---------------------------------------------------------}
 . Given a valid SPI handle the access is released and the handle freed.
 . RETURN: true for success, false for any failure
@@ -115,7 +124,71 @@ bool SpiClosePort (SPI_HANDLE spiHandle)
 . the read the buffer pointers can be the same buffer space.
 . RETURN: >= 0 transfer count for success, < 0 for any error  
 .--------------------------------------------------------------------------*/
-int SpiWriteAndRead (SPI_HANDLE spiHandle, uint8_t* TxData, uint16_t* RxData, uint8_t Length, bool LeaveCsLow)
+int SpiWriteAndRead (SPI_HANDLE spiHandle, uint8_t* TxData, uint8_t* RxData, uint8_t Length, bool LeaveCsLow)
+{
+	int retVal = -1;												// Preset -1
+	if (spiHandle && spiHandle->inuse)								// SPI handle valid and SPI handle is in use
+	{
+		if (spiHandle->uselocks)									// Using locks
+		{
+			sem_wait(&spiHandle->lock);								// Take semaphore
+		}
+		struct spi_ioc_transfer spi = { 0 };
+		spi.tx_buf = (unsigned long)TxData;							// transmit from "data"
+		spi.rx_buf = (unsigned long)RxData;							// receive into "data"
+		spi.len = Length;											// length of data to tx/rx
+		spi.delay_usecs = 0;										// Delay before sending
+		spi.speed_hz = spiHandle->spi_speed;						// Speed for transfer
+		spi.bits_per_word = spiHandle->spi_bitsPerWord;				// Bits per exchange
+		spi.cs_change = LeaveCsLow;									// 0=Set CS high after a transfer, 1=leave CS set low
+		retVal = ioctl(spiHandle->spi_fd, SPI_IOC_MESSAGE(1), &spi);// Execute exchange
+		if (spiHandle->uselocks)									// Using locks
+		{
+			sem_post(&spiHandle->lock);							    // Give semaphore
+		}
+	}
+	return retVal;													// Return result
+}
+
+/*-[ SpiWriteAndRead16 ]------------------------------------------------------}
+. Given a valid SPI handle and valid data pointers the call will send and
+. receive data to and from the buffer pointers. As the write occurs before
+. the read the buffer pointers can be the same buffer space.
+. RETURN: >= 0 transfer count for success, < 0 for any error  
+.--------------------------------------------------------------------------*/
+int SpiWriteAndRead16 (SPI_HANDLE spiHandle, uint16_t* TxData, uint16_t* RxData, uint8_t Length, bool LeaveCsLow)
+{
+	int retVal = -1;												// Preset -1
+	if (spiHandle && spiHandle->inuse)								// SPI handle valid and SPI handle is in use
+	{
+		if (spiHandle->uselocks)									// Using locks
+		{
+			sem_wait(&spiHandle->lock);								// Take semaphore
+		}
+		struct spi_ioc_transfer spi = { 0 };
+		spi.tx_buf = (unsigned long)TxData;							// transmit from "data"
+		spi.rx_buf = (unsigned long)RxData;							// receive into "data"
+		spi.len = Length;											// length of data to tx/rx
+		spi.delay_usecs = 0;										// Delay before sending
+		spi.speed_hz = spiHandle->spi_speed;						// Speed for transfer
+		spi.bits_per_word = spiHandle->spi_bitsPerWord;				// Bits per exchange
+		spi.cs_change = LeaveCsLow;									// 0=Set CS high after a transfer, 1=leave CS set low
+		retVal = ioctl(spiHandle->spi_fd, SPI_IOC_MESSAGE(1), &spi);// Execute exchange
+		if (spiHandle->uselocks)									// Using locks
+		{
+			sem_post(&spiHandle->lock);							    // Give semaphore
+		}
+	}
+	return retVal;													// Return result
+}
+
+/*-[ SpiWriteAndRead32 ]------------------------------------------------------}
+. Given a valid SPI handle and valid data pointers the call will send and
+. receive data to and from the buffer pointers. As the write occurs before
+. the read the buffer pointers can be the same buffer space.
+. RETURN: >= 0 transfer count for success, < 0 for any error  
+.--------------------------------------------------------------------------*/
+int SpiWriteAndRead32 (SPI_HANDLE spiHandle, uint32_t* TxData, uint32_t* RxData, uint8_t Length, bool LeaveCsLow)
 {
 	int retVal = -1;												// Preset -1
 	if (spiHandle && spiHandle->inuse)								// SPI handle valid and SPI handle is in use
@@ -178,3 +251,4 @@ int SpiWriteBlockRepeat (SPI_HANDLE spiHandle, uint16_t* TxBlock, uint16_t TxBlo
 	}
 	return retVal;													// Return result
 }
+
